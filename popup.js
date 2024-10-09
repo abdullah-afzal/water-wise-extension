@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const minutes = Math.floor((timeLeft % 3600) / 60);
                 const seconds = Math.floor(timeLeft % 60);
 
-                reminderMessage.innerHTML = `<p>Next reminder in </p><p id="reminderTime"> ${hours} : ${minutes} : ${seconds}</p>`;
+                reminderMessage.innerHTML = `<p>Next reminder in </p><p id="reminderTime"> ${hours}:${minutes}:${seconds}</p>`;
             } else {
                 reminderMessage.textContent = "No active reminders.";
             }
