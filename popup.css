@@ -1,0 +1,197 @@
+
+body {
+    font-family: Arial, sans-serif;
+    padding-left: 65px;
+    padding-right: 65px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+button {
+    background-color: #70BDF2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 5em;
+}
+
+input.switch {
+    display: none;
+}
+section{
+    position: relative;
+}
+label.switch {
+    background: #34383625;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-block;
+    height: 80px;
+    position: relative;
+    width: 80px;
+}
+
+label.switch i {
+    color: #fff;
+    display: block;
+    font-size: 2em;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: all .3s ease;
+}
+
+input:checked + label {
+    background: #70BDF2;
+}
+
+.settings {
+    display: none;
+    margin-top: 20px;
+}
+
+.active {
+    display: block;
+}
+
+label {
+    background: none;
+    border-radius: 0;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+.back-button {
+    display: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.back-button.active {
+    display: inline-block;
+}
+
+#hydrationMessage{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 20px;
+}
+
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('static/fonts/RADIOLAND.TTF');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#reminderMessage{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 15px;
+}
+#reminderTime{
+    font-family: 'MyCustomFont';
+    font-size: 17px;
+    display: inline;
+}
+
+/* Loading Styles (Wave) */
+@keyframes wave {
+    0% {
+      margin-left: 0;
+    }
+    100% {
+      margin-left: -1920px;
+    }
+  }
+  
+  @keyframes rise {
+    0% {
+      height: 0;
+    }
+    100% {
+      height: 70%;
+    }
+  }
+  
+  .wave {
+    background: url("https://raw.githubusercontent.com/scottgriv/River-Charts/main/static/assets/wave.svg") repeat-x;
+    position: absolute;
+    bottom: 0;
+    width: 3840px;
+    height: 198px;
+    opacity: 1;
+    animation: wave 4s linear infinite, rise 5s infinite alternate;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .wave::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background-color: #add8e6;
+    z-index: -1;
+    animation: rise 5s infinite alternate;
+  }
+
+
+  input[type=number] {
+    background: none;
+    /* border: none; */
+    color: #2a2c2d;
+    font-size: 19px;
+    font-weight: 100rem;
+    font-family: helvetica;
+    width: 180px;
+    border-radius: 5rem;
+  }
+
+  input[type=time] {
+    background: none;
+    border: none;
+    color: #2a2c2d;
+    font-size: 14px;
+    font-weight: 100rem;
+    font-family: helvetica;
+    width: 180px;
+  }
+  
+  /* Wrapper around the hour, minute, second, and am/pm fields as well as */
+  input[type=time]::-webkit-datetime-edit-fields-wrapper {
+    display: flex;
+  }
+  
+  /* The space between the fields - between hour and minute, the minute and 
+  second, second and am/pm */
+  input[type=time]::-webkit-datetime-edit-text {
+    padding: 19px 4px;
+  }
+  
+  /* Hour */
+  input[type=time]::-webkit-datetime-edit-hour-field {
+    
+    padding: 19px 13px;
+  }
+  
+  /* Minute */
+  input[type=time]::-webkit-datetime-edit-minute-field {
+    
+    padding: 19px 13px;
+  }
+  
+  /* AM/PM */
+  input[type=time]::-webkit-datetime-edit-ampm-field {
+    padding: 19px 13px;
+  }
+  

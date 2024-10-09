@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "Water Reminder",
+    "version": "1.0",
+    "description": "A simple extension to remind you to drink water every hour.",
+    "permissions": [
+        "storage",
+        "notifications",
+        "alarms"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "static/icons/water.png"
+    },
+    
+    "icons": {
+        "48": "static/icons/water.png"
+    },
+    "web_accessible_resources": [
+    {
+      "resources": ["static/sounds/alarm.mp3"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
