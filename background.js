@@ -1,4 +1,15 @@
+// When extension is installed or updated
 chrome.runtime.onInstalled.addListener(() => {
+  initializeReminderSettings();
+});
+
+// When the extension is restarted or the browser is reopened
+chrome.runtime.onStartup.addListener(() => {
+  checkAndSetDailyAlarms();
+});
+
+// Initialize reminder settings and set daily alarms
+function initializeReminderSettings() {
   chrome.storage.sync.set({
     remindersEnabled: true,
     glassSize: 250,
@@ -7,9 +18,36 @@ chrome.runtime.onInstalled.addListener(() => {
     endTime: "21:00"
   }, () => {
     setReminderAlarms();
+    createMidnightAlarm();
   });
-});
+}
 
+// Set a repeating alarm that checks for reminders at 00:00 daily
+function createMidnightAlarm() {
+  chrome.alarms.create('dailyReminderCheck', {
+    when: getMidnightTimestamp(),  // Set alarm for the next midnight
+    periodInMinutes: 1440  // 1440 minutes = 24 hours
+  });
+}
+
+// Get the timestamp for the next midnight (00:00)
+function getMidnightTimestamp() {
+  const now = new Date();
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+  return midnight.getTime();
+}
+
+// Check if today's alarms are set, and set them if needed
+function checkAndSetDailyAlarms() {
+  const today = new Date().toLocaleDateString();
+  chrome.storage.local.get('lastAlarmSetDate', (data) => {
+    if (data.lastAlarmSetDate !== today) {
+      setReminderAlarms();
+    }
+  });
+}
+
+// Set reminder alarms based on user settings
 function setReminderAlarms() {
   chrome.storage.sync.get(["remindersEnabled", "glassSize", "quantity", "startTime", "endTime"], (data) => {
     if (data.remindersEnabled) {
@@ -45,61 +83,62 @@ function setReminderAlarms() {
           currentHour++;
         }
       }
+
+      // Store today's date as the last alarm setup date
+      const today = new Date().toLocaleDateString();
+      chrome.storage.local.set({ lastAlarmSetDate: today });
     }
   });
 }
 
-// Listen for messages from popup.js
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "updateReminders") {
-    setReminderAlarms();
-  }
-});
-
-// Call to set alarms on update
-chrome.runtime.onUpdateAvailable.addListener(setReminderAlarms);
-
+// Listen for the daily 00:00 alarm and reset reminders for the new day
 chrome.alarms.onAlarm.addListener((alarm) => {
-  
-  if (alarm.name.startsWith("drinkWaterAlarm")) {
-    chrome.storage.sync.get(["remindersEnabled"], (data) => {
-      if (data.remindersEnabled) {
-        chrome.notifications.create({
-          type: "basic",
-          silent: false,
-          iconUrl: "static/icons/water.png",
-          title: "Hydration Reminder",
-          message: "Don't forget to drink water!",
-          priority: 2,
-          buttons: [
-            { title: "I drank water" },
-            { title: "Snooze" }
-          ]
-        });
-      }
-    });
-  }
-  else if (alarm.name.startsWith("drinkWaterSnooze")) {
-    
-    chrome.storage.sync.get(["remindersEnabled"], (data) => {
-      if (data.remindersEnabled) {
-        
-        chrome.notifications.create({
-          type: "basic",
-          silent: false,
-          iconUrl: "static/icons/water.png",
-          title: "Hydration Reminder (Snoozed)",
-          message: "You are already one glass late!",
-          priority: 2,
-          buttons: [
-            { title: "I drank water" },
-            { title: "Snooze Again" }
-          ]
-        });
-      }
-    });
+  if (alarm.name === 'dailyReminderCheck') {
+    checkAndSetDailyAlarms();
+  } else if (alarm.name.startsWith("drinkWaterAlarm")) {
+    sendReminderNotification();
+  } else if (alarm.name === 'drinkWaterSnooze') {
+    sendSnoozeNotification();
   }
 });
+
+function sendReminderNotification() {
+  chrome.storage.sync.get(["remindersEnabled"], (data) => {
+    if (data.remindersEnabled) {
+      chrome.notifications.create({
+        type: "basic",
+        silent: false,
+        iconUrl: "static/icons/water.png",
+        title: "Hydration Reminder",
+        message: "Don't forget to drink water!",
+        priority: 2,
+        buttons: [
+          { title: "I drank water" },
+          { title: "Snooze" }
+        ]
+      });
+    }
+  });
+}
+
+function sendSnoozeNotification() {
+  chrome.storage.sync.get(["remindersEnabled"], (data) => {
+    if (data.remindersEnabled) {
+      chrome.notifications.create({
+        type: "basic",
+        silent: false,
+        iconUrl: "static/icons/water.png",
+        title: "Hydration Reminder (Snoozed)",
+        message: "You are already one glass late!",
+        priority: 2,
+        buttons: [
+          { title: "I drank water" },
+          { title: "Snooze Again" }
+        ]
+      });
+    }
+  });
+}
 
 chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
   if (buttonIndex === 0) {
